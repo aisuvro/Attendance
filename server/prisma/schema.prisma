@@ -1,0 +1,46 @@
+datasource postgres {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     String[]
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Attendance {
+  attendanceType EnumAttendanceAttendanceType
+  createdAt      DateTime                     @default(now())
+  date           DateTime
+  employee       Employee?                    @relation(fields: [employeeId], references: [id])
+  employeeId     String?
+  id             String                       @id @default(cuid())
+  updatedAt      DateTime                     @updatedAt
+}
+
+model Employee {
+  attendances Attendance[]
+  createdAt   DateTime     @default(now())
+  dob         DateTime
+  id          String       @id @default(cuid())
+  name        String
+  salary      Float
+  ssl         String       @unique
+  updatedAt   DateTime     @updatedAt
+}
+
+enum EnumAttendanceAttendanceType {
+  Present
+  Absent
+  Leave
+}
